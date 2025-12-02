@@ -47,12 +47,6 @@ models/*.pt
 models/*.pth
 *.weights
 
-# Data (exclude structure, include actual data)
-data/**/*.jpg
-data/**/*.jpeg
-data/**/*.png
-data/**/*.pdf
-!data/.gitkeep
 
 # Training outputs
 *.png
@@ -85,3 +79,8 @@ results/
 
 # Temporary reference repositories
 temp_*/
+# Data files - now tracked with Git LFS
+!data/**/*.jpg
+!data/**/*.jpeg
+!data/**/*.png
+!data/**/*.pdf
