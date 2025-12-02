@@ -27,13 +27,22 @@ def analyze_color_histogram(image: np.ndarray, doc_type: str = 'aadhaar') -> Dic
     dominant_hue = None
     
     if doc_type.lower() == 'aadhaar':
-        # Aadhaar cards typically have blue tones (hue around 100-130)
-        # Check if dominant hue is in blue range
+        # CORRECTED: Aadhaar cards typically have WHITE background
+        # Only Baal Aadhaar (children under 5) has blue background
+        # Check if dominant hue is white (low saturation, high brightness)
         dominant_hue = int(np.argmax(hist_h))
+        mean_saturation = np.mean(hsv[:, :, 1])
+        mean_value = np.mean(hsv[:, :, 2])
         
-        if not (100 <= dominant_hue <= 130):
+        # White background: low saturation (<30) and high brightness (>200)
+        # Blue background (Baal Aadhaar): hue 100-130, higher saturation
+        is_white = mean_saturation < 30 and mean_value > 200
+        is_blue = (100 <= dominant_hue <= 130) and mean_saturation > 50
+        
+        # Accept both white (standard) and blue (Baal Aadhaar)
+        if not (is_white or is_blue):
             issues.append('color_mismatch')
-            confidence -= 0.3
+            confidence -= 0.2  # Reduced penalty since both colors are valid
     
     # Check for plain white paper (high saturation in all channels)
     mean_saturation = np.mean(hsv[:, :, 1])
@@ -495,6 +504,18 @@ def comprehensive_fake_detection(image: np.ndarray, doc_type: str, ocr_text: str
     else:
         layout_result = None
     
+    # NEW: Position-based detection using model predictions
+    position_result = None
+    try:
+        from position_based_fake_detector import detect_fake_using_positions
+        position_result = detect_fake_using_positions(image, doc_type)
+        if position_result.get('is_fake', False):
+            all_issues.extend(position_result.get('issues', []))
+        confidence_scores.append(position_result.get('confidence', 1.0))
+    except Exception as e:
+        # Position detector not available or error, skip
+        position_result = {'error': str(e)}
+    
     # Calculate overall confidence (weighted average)
     overall_confidence = np.mean(confidence_scores)
     
@@ -513,7 +534,8 @@ def comprehensive_fake_detection(image: np.ndarray, doc_type: str, ocr_text: str
             'layout_analysis': layout_result,
             'pasted_photo_detection': pasted_photo_result,
             'photo_tampering': photo_tamper_result,
-            'layout_validation': layout_result if layout_result else {}
+            'layout_validation': layout_result if layout_result else {},
+            'position_based_detection': position_result if position_result else {}
         }
     }
 

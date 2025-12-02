@@ -4,10 +4,22 @@ Uses Tesseract OCR for text extraction and validation
 """
 
 import re
+import os
 import pytesseract
 import cv2
 import numpy as np
 from typing import Dict, List, Tuple, Optional
+
+# Auto-configure Tesseract path for Windows
+if os.name == 'nt':  # Windows
+    tesseract_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+    for path in tesseract_paths:
+        if os.path.exists(path):
+            pytesseract.pytesseract.tesseract_cmd = path
+            break
 
 
 def preprocess_image_for_ocr(image: np.ndarray) -> np.ndarray:

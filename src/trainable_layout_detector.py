@@ -15,6 +15,17 @@ from tensorflow.keras import layers, Model, Input
 from tensorflow.keras.applications import MobileNetV2
 import pytesseract
 
+# Configure Tesseract path for Windows
+if os.name == 'nt':  # Windows
+    tesseract_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+    for path in tesseract_paths:
+        if os.path.exists(path):
+            pytesseract.pytesseract.tesseract_cmd = path
+            break
+
 
 class LayoutPositionLearner:
     """
@@ -42,7 +53,7 @@ class LayoutPositionLearner:
                 annotations.append(data)
         
         if not annotations:
-            print("⚠️  No annotations found. Using default positions.")
+            print("[WARNING] No annotations found. Using default positions.")
             return self._get_default_positions()
         
         # Calculate average positions from annotations
@@ -112,13 +123,13 @@ class LayoutPositionLearner:
         images = list(Path(images_dir).glob('*.jpg')) + list(Path(images_dir).glob('*.png'))
         
         if not images:
-            print("⚠️  No images found. Using default positions.")
+            print("[WARNING] No images found. Using default positions.")
             return self._get_default_positions()
         
         photo_positions = []
         text_positions = {}
         
-        print(f"📚 Learning from {len(images)} images...")
+        print(f"[INFO] Learning from {len(images)} images...")
         
         for img_path in images:
             image = cv2.imread(str(img_path))
@@ -164,7 +175,7 @@ class LayoutPositionLearner:
                 'std': np.std(photo_positions, axis=0).tolist(),
                 'count': len(photo_positions)
             }
-            print(f"✅ Learned photo position from {len(photo_positions)} samples")
+            print(f"[SUCCESS] Learned photo position from {len(photo_positions)} samples")
         
         for label, positions in text_positions.items():
             if positions:
@@ -176,7 +187,7 @@ class LayoutPositionLearner:
                     'std': np.std(positions, axis=0).tolist(),
                     'count': len(positions)
                 }
-                print(f"✅ Learned {label} position from {len(positions)} samples")
+                print(f"[SUCCESS] Learned {label} position from {len(positions)} samples")
         
         self.learned_positions = learned_layout
         return learned_layout
@@ -272,7 +283,7 @@ class LayoutPositionLearner:
         }
         with open(filepath, 'w') as f:
             json.dump(data, f, indent=2)
-        print(f"✅ Saved learned positions to {filepath}")
+        print(f"[SUCCESS] Saved learned positions to {filepath}")
     
     def load_learned_positions(self, filepath: str):
         """Load learned positions from file"""
@@ -282,7 +293,7 @@ class LayoutPositionLearner:
         self.doc_type = data.get('doc_type', self.doc_type)
         self.learned_positions = data.get('learned_positions')
         self.position_stats = data.get('position_stats', {})
-        print(f"✅ Loaded learned positions from {filepath}")
+        print(f"[SUCCESS] Loaded learned positions from {filepath}")
         return self.learned_positions
     
     def get_positions(self):
@@ -327,9 +338,9 @@ def train_position_detector(images_dir: str, annotations_dir: str,
     """
     # This would require annotated training data
     # For now, we use the learning-from-images approach
-    print("📚 Training position detector...")
-    print("💡 Note: Full training requires annotated bounding boxes")
-    print("💡 Using auto-detection approach instead...")
+    print("[INFO] Training position detector...")
+    print("[INFO] Note: Full training requires annotated bounding boxes")
+    print("[INFO] Using auto-detection approach instead...")
     
     learner = LayoutPositionLearner()
     learned = learner.learn_from_images(images_dir, auto_annotate=True)
@@ -356,7 +367,7 @@ if __name__ == "__main__":
     
     # Get positions
     positions = learner.get_positions()
-    print(f"\n📐 Learned Positions:")
+    print(f"\n[INFO] Learned Positions:")
     print(f"Photo: {positions.get('photo_region')}")
     print(f"Text Regions: {positions.get('text_regions')}")
 

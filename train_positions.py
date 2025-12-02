@@ -24,26 +24,26 @@ def train_from_images(images_dir: str, doc_type: str, output_file: str):
     print("="*60)
     
     if not os.path.exists(images_dir):
-        print(f"❌ Error: Directory {images_dir} not found")
+        print(f"[ERROR] Directory {images_dir} not found")
         return
     
     # Count images
     images = list(Path(images_dir).glob('*.jpg')) + list(Path(images_dir).glob('*.png'))
-    print(f"\n📸 Found {len(images)} images")
+    print(f"\n[INFO] Found {len(images)} images")
     
     if len(images) == 0:
-        print("❌ No images found. Please add images to the directory.")
+        print("[ERROR] No images found. Please add images to the directory.")
         return
     
     # Create learner
     learner = LayoutPositionLearner(doc_type=doc_type)
     
     # Learn positions
-    print("\n📚 Learning positions from images...")
+    print("\n[INFO] Learning positions from images...")
     learned = learner.learn_from_images(images_dir, auto_annotate=True)
     
     if not learned:
-        print("❌ Failed to learn positions")
+        print("[ERROR] Failed to learn positions")
         return
     
     # Save learned positions
@@ -57,7 +57,7 @@ def train_from_images(images_dir: str, doc_type: str, output_file: str):
     
     if 'photo_region' in learned:
         photo = learned['photo_region']
-        print(f"\n📸 Photo Region:")
+        print(f"\n[PHOTO] Photo Region:")
         print(f"   Normalized: ({photo[0]:.3f}, {photo[1]:.3f}, {photo[2]:.3f}, {photo[3]:.3f})")
         if 'photo' in learner.position_stats:
             stats = learner.position_stats['photo']
@@ -90,27 +90,27 @@ def train_from_annotations(annotations_dir: str, doc_type: str, output_file: str
     print("="*60)
     
     if not os.path.exists(annotations_dir):
-        print(f"❌ Error: Directory {annotations_dir} not found")
+        print(f"[ERROR] Directory {annotations_dir} not found")
         return
     
     # Count annotations
     annotations = list(Path(annotations_dir).glob('*.json'))
-    print(f"\n📄 Found {len(annotations)} annotation files")
+    print(f"\n[INFO] Found {len(annotations)} annotation files")
     
     if len(annotations) == 0:
-        print("❌ No annotations found.")
-        print("💡 Create annotations using: python src/annotation_helper.py")
+        print("[ERROR] No annotations found.")
+        print("[INFO] Create annotations using: python src/annotation_helper.py")
         return
     
     # Create learner
     learner = LayoutPositionLearner(doc_type=doc_type)
     
     # Learn positions
-    print("\n📚 Learning positions from annotations...")
+    print("\n[INFO] Learning positions from annotations...")
     learned = learner.learn_from_annotations(annotations_dir)
     
     if not learned:
-        print("❌ Failed to learn positions")
+        print("[ERROR] Failed to learn positions")
         return
     
     # Save learned positions

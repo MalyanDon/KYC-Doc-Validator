@@ -250,7 +250,7 @@ def load_dataset_with_positions(data_dir: str, target_size: tuple = (150, 150)) 
                     continue
             
             if total_files > 0:
-                print(" ✅")
+                print(" [OK]")
     
     return (
         (np.array(X_train), np.array(y_train_class), np.array(y_train_auth), np.array(y_train_pos)),
@@ -313,19 +313,19 @@ def train_enhanced_model(data_dir: str, epochs: int = 10, batch_size: int = 32):
     print("="*60)
     
     # Load dataset
-    print("\n📚 Loading dataset with position labels...")
-    print("   ⚡ Using learned positions directly (fast mode - no OCR per image)")
-    print("   📊 This will be much faster than extracting positions from each image...")
+    print("\n[INFO] Loading dataset with position labels...")
+    print("   [INFO] Using learned positions directly (fast mode - no OCR per image)")
+    print("   [INFO] This will be much faster than extracting positions from each image...")
     (X_train, y_train_class, y_train_auth, y_train_pos), \
     (X_val, y_val_class, y_val_auth, y_val_pos), \
     (X_test, y_test_class, y_test_auth, y_test_pos) = load_dataset_with_positions(data_dir)
     
-    print(f"\n✅ Train: {len(X_train)} images loaded")
-    print(f"✅ Val: {len(X_val)} images loaded")
-    print(f"✅ Test: {len(X_test)} images loaded")
+    print(f"\n[SUCCESS] Train: {len(X_train)} images loaded")
+    print(f"[SUCCESS] Val: {len(X_val)} images loaded")
+    print(f"[SUCCESS] Test: {len(X_test)} images loaded")
     
     # Create model
-    print("\n🏗️  Creating enhanced ensemble model...")
+    print("\n[INFO] Creating enhanced ensemble model...")
     model = create_enhanced_ensemble_model(
         input_shape=(150, 150, 3),
         num_classes=4,
@@ -333,7 +333,7 @@ def train_enhanced_model(data_dir: str, epochs: int = 10, batch_size: int = 32):
     )
     model = compile_enhanced_model(model, learning_rate=0.001, predict_positions=True)
     
-    print("\n📊 Model Summary:")
+    print("\n[INFO] Model Summary:")
     model.summary()
     
     # Create data generators
@@ -364,7 +364,7 @@ def train_enhanced_model(data_dir: str, epochs: int = 10, batch_size: int = 32):
     ]
     
     # Train
-    print("\n🚀 Starting training...")
+    print("\n[INFO] Starting training...")
     import sys
     sys.stdout.flush()
     print(f"   Training on {len(X_train)} samples, {len(train_gen)} batches per epoch")
@@ -380,18 +380,22 @@ def train_enhanced_model(data_dir: str, epochs: int = 10, batch_size: int = 32):
     
     # Save model
     model_save_path = 'models/kyc_validator_enhanced.h5'
-    print(f"\n💾 Saving model to {model_save_path}...")
+    print(f"\n[INFO] Saving model to {model_save_path}...")
     os.makedirs('models', exist_ok=True)
     try:
         model.save(model_save_path)
-        print("✅ Model saved successfully!")
+        print("[SUCCESS] Model saved successfully!")
     except Exception as e:
-        print(f"⚠️  Could not save full model: {e}")
-        model.save_weights('models/kyc_validator_enhanced_weights.h5')
-        print("✅ Model weights saved!")
+        print(f"[WARNING] Could not save full model: {e}")
+        try:
+            # Keras requires .weights.h5 extension for save_weights
+            model.save_weights('models/kyc_validator_enhanced.weights.h5')
+            print("[SUCCESS] Model weights saved!")
+        except Exception as e2:
+            print(f"[ERROR] Could not save weights either: {e2}")
     
     # Evaluate
-    print("\n📊 Evaluating on test set...")
+    print("\n[INFO] Evaluating on test set...")
     test_gen = EnhancedDataGenerator(
         X_test, y_test_class, y_test_auth, y_test_pos,
         batch_size=batch_size, augment=False
@@ -404,7 +408,7 @@ def train_enhanced_model(data_dir: str, epochs: int = 10, batch_size: int = 32):
     print(f"  Authenticity Accuracy: {test_results[5]:.4f}")
     print(f"  Position MAE: {test_results[6]:.4f}")
     
-    print("\n✅ Enhanced training complete!")
+    print("\n[SUCCESS] Enhanced training complete!")
     return model, history
 
 
