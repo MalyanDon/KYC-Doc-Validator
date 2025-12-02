@@ -1,0 +1,24 @@
+WARNING:absl:At this time, the v2.11+ optimizer `tf.keras.optimizers.Adam` runs slowly on M1/M2 Macs, please use the legacy Keras optimizer instead, located at `tf.keras.optimizers.legacy.Adam`.
+Loading dataset...
+
+✅ Dataset loaded successfully:
+   Train: 1575 images
+   Val: 277 images
+   Test: 265 images
+Training samples: 1575
+Validation samples: 277
+Test samples: 265
+
+Creating ensemble model...
+Traceback (most recent call last):
+  File "/Users/abhishekmalyan/Aadhar Card and Pancard/KYC-Doc-Validator/src/train.py", line 388, in <module>
+    train_model(
+  File "/Users/abhishekmalyan/Aadhar Card and Pancard/KYC-Doc-Validator/src/train.py", line 246, in train_model
+    train_gen = create_data_generator(X_train, y_train_class, y_train_auth, 
+  File "/Users/abhishekmalyan/Aadhar Card and Pancard/KYC-Doc-Validator/src/train.py", line 185, in create_data_generator
+    generator = datagen.flow(
+  File "/Users/abhishekmalyan/Aadhar Card and Pancard/KYC-Doc-Validator/venv/lib/python3.10/site-packages/keras/src/preprocessing/image.py", line 1545, in flow
+    return NumpyArrayIterator(
+  File "/Users/abhishekmalyan/Aadhar Card and Pancard/KYC-Doc-Validator/venv/lib/python3.10/site-packages/keras/src/preprocessing/image.py", line 707, in __init__
+    raise ValueError(
+ValueError: `x` (images tensor) and `y` (labels) should have the same length. Found: x.shape = (1575, 150, 150, 3), y.shape = ()

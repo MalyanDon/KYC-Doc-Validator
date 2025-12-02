@@ -1,0 +1,98 @@
+╔══════════════════════════════════════════════════════════════════╗
+║         KYC DOCUMENT VALIDATOR - GET STARTED GUIDE              ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📚 DOCUMENTATION FILES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. QUICK_START.md      → 5-minute quick start guide
+2. TRAINING_GUIDE.md   → Complete detailed training instructions
+3. WORKFLOW_SUMMARY.md → Visual workflow and reference
+4. README.md           → Project overview and features
+
+🚀 QUICK START (5 MINUTES):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 1: Setup
+  cd KYC-Doc-Validator
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+
+Step 2: Prepare Dataset
+  python prepare_dataset.py --create
+  # Add images to data/train/, data/val/, data/test/
+
+Step 3: Train
+  python src/train.py --data_dir data --epochs 10
+
+Step 4: Test
+  streamlit run app/streamlit_app.py
+  # OR
+  python test_model.py --image path/to/image.jpg
+
+📋 COMPLETE WORKFLOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. SETUP (One-time, ~5 min)
+   ├─ Install Tesseract OCR
+   ├─ Create virtual environment
+   ├─ Install Python packages
+   └─ Verify installation
+
+2. DATASET PREPARATION (~10-30 min)
+   ├─ Create folder structure
+   ├─ Add images to folders
+   ├─ Verify dataset
+   └─ Check image counts
+
+3. TRAINING (~10-30 min per run)
+   ├─ Run training script
+   ├─ Monitor progress
+   ├─ Check outputs
+   └─ Model saved automatically
+
+4. TESTING (~1-5 min)
+   ├─ Command line: test_model.py
+   ├─ Web app: streamlit_app.py
+   └─ Notebook: quick_test.ipynb
+
+🛠️ HELPER SCRIPTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+prepare_dataset.py  → Dataset management
+  --create          Create folder structure
+  --count           Count images in dataset
+  --verify          Verify dataset completeness
+
+test_model.py       → Model testing
+  --image PATH      Test single image
+  --dir PATH        Test all images in directory
+  --model PATH      Use custom model file
+
+📁 PROJECT STRUCTURE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+src/              → Source code (models, OCR, fake detection)
+app/              → Streamlit web application
+data/             → Your dataset (train/val/test)
+models/           → Trained models (created after training)
+notebooks/        → Jupyter notebooks for testing
+
+📖 WHERE TO START:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+New User?     → Read QUICK_START.md
+Need Details? → Read TRAINING_GUIDE.md
+Quick Ref?    → Read WORKFLOW_SUMMARY.md
+Full Info?    → Read README.md
+
+✅ NEXT STEPS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Open QUICK_START.md
+2. Follow the 5-minute setup
+3. Prepare your dataset
+4. Train the model
+5. Test with Streamlit app
+
+Happy Training! 🎉
